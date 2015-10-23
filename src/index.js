@@ -5,13 +5,13 @@ function defaultEqualityCheck(a, b) {
 export function defaultMemoize(func, equalityCheck = defaultEqualityCheck) {
     let lastArgs = null;
     let lastResult = null;
-    return (...args) => {
+    return (state, props, ...args) => {
         if (lastArgs !== null &&
             args.every((value, index) => equalityCheck(value, lastArgs[index]))) {
             return lastResult;
         }
         lastArgs = args;
-        lastResult = func(...args);
+        lastResult = func(state, props, ...args);
         return lastResult;
     };
 }
@@ -50,7 +50,7 @@ export function createSelectorCreator(memoize, ...memoizeOptions) {
             const params = dependencies.map(
                 dependency => dependency(state, props, ...args)
             );
-            return memoizedResultFunc(...params);
+            return memoizedResultFunc(state, props, ...params);
         };
 
         selector.recomputations = () => recomputations;
